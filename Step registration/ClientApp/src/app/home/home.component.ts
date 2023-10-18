@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.initControls();
 
-    this.countryServiceSubscription = this._countryService.getCounries().subscribe(e => {
+    this.countryServiceSubscription = this._countryService.getCountries().subscribe(e => {
       this.countries = e;
     });
   }
