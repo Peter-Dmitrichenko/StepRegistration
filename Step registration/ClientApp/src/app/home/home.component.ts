@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { ReplaySubject, Subscription, takeUntil } from 'rxjs';
 import { RegistrationDialog } from '../dialogs/registrationDialog';
 import { Country } from '../models/country';
 import { Province } from '../models/province';
@@ -21,6 +21,8 @@ import { createPasswordStrengthValidator } from '../validators/createPasswordStr
 export class HomeComponent implements OnInit {
   readonly emailRegex: string = '^[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})$';
 
+  private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
+
   countries: Country[] = [];
   provinces: Province[] = [];
 
@@ -33,10 +35,6 @@ export class HomeComponent implements OnInit {
 
   countryCtrlName: string = "countryCtrl";
   provinceCtrlName: string = "provinceCtrl";
-
-  countryServiceSubscription!: Subscription;
-  registerUserSubscription!: Subscription;
-  dialogSubscription!: Subscription;
 
 
   firstFormGroup: FormGroup = new FormGroup([]);
@@ -60,7 +58,9 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.initControls();
 
-    this.countryServiceSubscription = this._countryService.getCountries().subscribe(e => {
+    this._countryService.getCountries()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(e => {
       this.countries = e;
     });
   }
@@ -90,9 +90,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.countryServiceSubscription?.unsubscribe();
-    this.registerUserSubscription?.unsubscribe();
-    this.dialogSubscription?.unsubscribe();
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   onCountrySelectionChanged(value: string): void {
@@ -124,7 +123,7 @@ export class HomeComponent implements OnInit {
     this._ref.markForCheck();
 
     if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
-      this.registerUserSubscription = this._userService.saveUser(
+      this._userService.saveUser(
         new User(
           this.loginCtrl.value,
           this.passwordCtrl.value,
@@ -132,7 +131,9 @@ export class HomeComponent implements OnInit {
           this.countryCtrl.value,
           this.provinceCtrl.value,
         )
-      ).subscribe(() => {
+      )
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(() => {
         this.openDialog();
       }, e => {
         console.log(e);
@@ -146,7 +147,9 @@ export class HomeComponent implements OnInit {
       data: { name: this.loginCtrl.value },
     });
 
-    this.dialogSubscription = dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(result => {
       this._document.location.reload();
     });
   }
