@@ -1,0 +1,116 @@
+<mat-horizontal-stepper [linear]="true" #stepper class="stepper">
+
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup" class="py-2">
+      <ng-template matStepLabel>
+        <div class="stepper-header-overlay" (click)="onStepsClick()"></div>
+        Login & Password
+      </ng-template>
+
+      <p class="fieldWrapper">
+        <mat-form-field appearance="outline" class="form-nom">
+          <mat-label>Login</mat-label>
+          <input matInput placeholder="Login" formControlName="loginCtrl" required>
+
+          <mat-error *ngIf="(loginCtrl.touched || firstFormGroup.dirty) && loginCtrl.invalid && loginCtrl.errors?.required">
+             Required
+          </mat-error>
+
+          <mat-error *ngIf="(loginCtrl.touched || firstFormGroup.dirty) && loginCtrl.invalid && loginCtrl.errors?.pattern">
+            Must be a valid email
+          </mat-error>
+
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Password" formControlName="passwordCtrl" required type="password" (change)="onPasswordChange()">
+
+          <mat-error *ngIf="(passwordCtrl.touched || firstFormGroup.dirty) && passwordCtrl.invalid && passwordCtrl.errors?.required">
+            Required
+          </mat-error>
+
+          <mat-error *ngIf="(passwordCtrl.touched || firstFormGroup.dirty) && passwordCtrl.invalid && passwordCtrl.errors?.passwordStrength">
+            Has to contain a digit and a special character
+          </mat-error>
+
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field appearance="outline">
+          <mat-label>Confirm password</mat-label>
+          <input matInput placeholder="Confirm password" formControlName="confirmPasswordCtrl" required type="password">
+
+          <mat-error *ngIf="(confirmPasswordCtrl.touched || firstFormGroup.dirty) && confirmPasswordCtrl.invalid && confirmPasswordCtrl.errors?.required">
+            Required
+          </mat-error>
+
+          <mat-error *ngIf="(confirmPasswordCtrl.touched || firstFormGroup.dirty) && confirmPasswordCtrl.invalid && confirmPasswordCtrl.errors?.matchError">
+            Passwords must match
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-checkbox formControlName="agreeCtrl">
+          I agree with the processing of personal data
+
+          <mat-error *ngIf="isNextClicked && agreeCtrl.invalid && firstFormGroup.dirty">
+            Unfortunately this is a requirement
+          </mat-error>
+        </mat-checkbox>
+      </p>
+
+      <div>
+        <button mat-button mat-raised-button color="primary" matStepperNext (click)="onStepsClick()">Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup" class="py-2">
+      <ng-template matStepLabel>
+        <div class="stepper-header-overlay" (click)="onStepsClick()"></div>
+          Location
+      </ng-template>
+
+
+
+      <p>
+        <mat-form-field appearance="outline">
+          <mat-select placeholder="Please select country" formControlName="countryCtrl" (selectionChange)="onCountrySelectionChanged($event.value)">
+            <mat-option *ngFor="let country of countries" [value]="country.id">
+              {{country.name}}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="(countryCtrl.touched || secondFormGroup.dirty) && countryCtrl.invalid">
+            Required
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field appearance="outline">
+          <mat-select placeholder="Please select country first" formControlName="provinceCtrl">
+            <mat-option *ngFor="let province of provinces" [value]="province.id">
+              {{province.name}}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="(provinceCtrl.touched || secondFormGroup.dirty) && provinceCtrl.invalid">
+            Required
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <div>
+        <button mat-button mat-raised-button color="primary" matStepperNext (click)="onSaveClick()">Register</button>
+      </div>
+    </form>
+  </mat-step>
+
+</mat-horizontal-stepper>

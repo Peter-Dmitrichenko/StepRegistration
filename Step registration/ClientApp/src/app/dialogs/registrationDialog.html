@@ -1,0 +1,12 @@
+<h1 mat-dialog-title class="mb-0">Registered as {{data.name}}</h1>
+<div mat-dialog-content class="pb-2">
+  <p>
+    {{data.name}}, greetings!<br />
+    Thank you for your time.<br />
+    Lets keep in touch.<br />
+    Have a great day!
+  </p>
+</div>
+<div mat-dialog-actions class="ps-4 pb-4">
+  <button mat-button mat-raised-button color="primary" [mat-dialog-close]="data.name" cdkFocusInitial>OK</button>
+</div>

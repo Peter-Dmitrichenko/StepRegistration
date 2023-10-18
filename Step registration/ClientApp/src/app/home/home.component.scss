@@ -1,0 +1,44 @@
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-nom {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+p{
+  display: grid;
+}
+
+.mat-horizontal-stepper-wrapper {
+  max-width: 25em;
+}
+
+.stepper {
+  max-width: 25em;
+  margin: auto;
+}
+
+.mat-mdc-checkbox {
+  margin-left: -0.7em;
+  padding-bottom: 1em;
+}
+
+.mat-mdc-checkbox .mat-mdc-form-field-error {
+  margin-left: -0.25em;
+}
+
+.stepper-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
